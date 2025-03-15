@@ -17,6 +17,21 @@ class DesarrollanController {
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(["status" => "200", "data" => $data]);
     }
+    public function getById($id) {
+        if (!$id) {
+            echo json_encode(["status" => "Error", "message" => "ID no proporcionado"]);
+            return;
+        }
+
+        $stmt = $this->desarrollan->getById($id);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            echo json_encode(["status" => "200", "data" => $result]);
+        } else {
+            echo json_encode(["status" => "404", "message" => "No se encontró el registro"]);
+        }
+    }
 
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -50,6 +65,20 @@ class DesarrollanController {
 
         if ($this->desarrollan->update()) {
             echo json_encode(["status" => "200", "message" => "Registro actualizado"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
+        }
+    }
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            return;
+        }
+
+        if ($this->desarrollan->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Registro actualizado parcialmente"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
         }

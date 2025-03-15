@@ -18,6 +18,13 @@ class AsignacionActividad {
         $stmt->execute();
         return $stmt;
     }
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id_asignacion_actividad = :id";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt;
+    }
 
     public function create() {
         $query = "INSERT INTO " . $this->table . " (fecha, fk_identificacion, fk_id_actividad) VALUES (:fecha, :fk_identificacion, :fk_id_actividad)";
@@ -40,7 +47,25 @@ class AsignacionActividad {
 
         return $stmt->execute();
     }
-    
+    public function patch($id, $data) {
+        $setClause = [];
+        $params = [];
+
+        foreach ($data as $key => $value) {
+            $setClause[] = "$key = :$key";
+            $params[":$key"] = $value;
+        }
+
+        if (empty($setClause)) {
+            return false;
+        }
+
+        $query = "UPDATE " . $this->table . " SET " . implode(", ", $setClause) . " WHERE id_asignacion_actividad = :id";
+        $stmt = $this->connect->prepare($query);
+        $params[":id"] = $id;
+
+        return $stmt->execute($params);
+    }
     public function delete($id) {
         $query = "DELETE FROM asignacion_actividad WHERE id_asignacion_actividad = :id";
         $stmt = $this->connect->prepare($query);

@@ -17,6 +17,17 @@ class CalendarioLunarController {
         $calendario_lunar = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(["status" => "200", "data" => $calendario_lunar]);
     }
+    public function getById($id) {
+        $stmt = $this->calendario_lunar->getById($id);
+        $calendario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($calendario) {
+            echo json_encode(["status" => "200", "data" => $calendario]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Evento lunar no encontrado"]);
+            http_response_code(404);
+        }
+    }
 
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -53,7 +64,21 @@ class CalendarioLunarController {
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
         }
-    }    
+    } 
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            return;
+        }
+
+        if ($this->calendario_lunar->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Evento lunar actualizado parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
+        }
+    }   
 
     public function delete($id) {
         $query = "DELETE FROM calendario_lunar WHERE id_calendario_lunar = :id";

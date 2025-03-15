@@ -18,6 +18,17 @@ class AsignacionActividadController {
         $asignacion_actividad = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(["status" => "200", "data" => $asignacion_actividad]);
     }
+    public function getById($id) {
+        $stmt = $this->asignacion_actividad->getById($id);
+        $asignacion = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($asignacion) {
+            echo json_encode(["status" => "200", "data" => $asignacion]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Asignación no encontrada"]);
+            http_response_code(404);
+        }
+    }
 
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -31,7 +42,7 @@ class AsignacionActividadController {
         $this->asignacion_actividad->fk_id_actividad = $data['fk_id_actividad'];
 
         if ($this->asignacion_actividad->create()) {
-            echo json_encode(["status" => "201", "message" => "Actividad asignada correctamente"]);
+            echo json_encode(["status" => "200", "message" => "Actividad asignada correctamente"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al asignar actividad"]);
         }
@@ -57,7 +68,20 @@ class AsignacionActividadController {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
         }
     }
-    
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            return;
+        }
+
+        if ($this->asignacion_actividad->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Asignación actualizada parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
+        }
+    }
 
     
     public function delete($id) {
