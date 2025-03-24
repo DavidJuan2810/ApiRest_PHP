@@ -1,6 +1,5 @@
 <?php
-class Database{
-
+class Database {
     private $host = 'localhost';
     private $user = 'root';
     private $pass = '';
@@ -8,14 +7,14 @@ class Database{
 
     public $connect;
 
-    public function getConnection(){
+    public function getConnection() {
         $this->connect = null;
-        try{
+        try {
             $this->connect = new PDO("mysql:host={$this->host};dbname={$this->dbname}", $this->user, $this->pass);
             $this->connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->connect->exec('SET CHARACTER SET utf8');
-        }catch(PDOException $e){
-            die('Error de conexión: '.$e->getMessage());
+        } catch (PDOException $e) {
+            die('Error de conexión: ' . $e->getMessage());
         }
         return $this->connect;
     }

@@ -18,6 +18,16 @@ class ProgramacionController {
         echo json_encode(["status" => "200", "data" => $programaciones]);
     }
 
+    public function getById($id) {
+        $stmt = $this->programacion->getById($id);
+        $programacion = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($programacion) {
+            echo json_encode(["status" => "200", "data" => $programacion]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Programación no encontrada"]);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
 

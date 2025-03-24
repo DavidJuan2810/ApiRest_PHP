@@ -25,6 +25,19 @@ class Programacion {
         return $stmt;
     }
 
+    public function getById($id) {
+        $query = "SELECT programacion.*, asignacion_actividad.fk_id_actividad, calendario_lunar.evento 
+                  FROM " . $this->table . " 
+                  INNER JOIN asignacion_actividad ON programacion.fk_id_asignacion_actividad = asignacion_actividad.id_asignacion_actividad 
+                  INNER JOIN calendario_lunar ON programacion.fk_id_calendario_lunar = calendario_lunar.id_calendario_lunar 
+                  WHERE programacion.id_programacion = :id";
+
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt;
+    }
+
     public function create() {
         $query = "INSERT INTO " . $this->table . " (duracion, estado, fecha_programada, fk_id_asignacion_actividad, fk_id_calendario_lunar) 
                   VALUES (:duracion, :estado, :fecha_programada, :fk_id_asignacion_actividad, :fk_id_calendario_lunar)";
