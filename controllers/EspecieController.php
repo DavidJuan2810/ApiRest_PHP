@@ -18,6 +18,15 @@ class EspecieController {
         echo json_encode(["status" => "200", "data" => $especies]);
     }
 
+    public function getById($id) {
+        $especie = $this->especie->getById($id);
+        if ($especie) {
+            echo json_encode(["status" => "200", "data" => $especie]);
+        } else {
+            echo json_encode(["status" => "404", "message" => "Especie no encontrada"]);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
         if (!isset($data['nombre_comun'], $data['nombre_cientifico'], $data['descripcion'], $data['fk_id_tipo_cultivo'])) {

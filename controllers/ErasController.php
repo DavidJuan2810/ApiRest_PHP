@@ -18,6 +18,17 @@ class ErasController {
         echo json_encode(["status" => "200", "data" => $eras]);
     }
 
+    public function getById($id) {
+        $stmt = $this->eras->getById($id);
+        $era = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($era) {
+            echo json_encode(["status" => "200", "data" => $era]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Era no encontrada"]);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
 

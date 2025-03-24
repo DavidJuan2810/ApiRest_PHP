@@ -18,6 +18,14 @@ class Eras {
         return $stmt;
     }
 
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id_eras = :id";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt;
+    }
+
     public function create() {
         $query = "INSERT INTO " . $this->table . " (descripcion, fk_id_lote) 
                   VALUES (:descripcion, :fk_id_lote)";

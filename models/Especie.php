@@ -20,6 +20,14 @@ class Especie {
         return $stmt;
     }
 
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id_especie = :id";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function create() {
         $query = "INSERT INTO " . $this->table . " (nombre_comun, nombre_cientifico, descripcion, fk_id_tipo_cultivo) 
                   VALUES (:nombre_comun, :nombre_cientifico, :descripcion, :fk_id_tipo_cultivo)";
