@@ -20,6 +20,13 @@ class Genera {
         $stmt->execute();
         return $stmt;
     }
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id_genera = :id";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt;
+    }
 
     public function create() {
         $query = "INSERT INTO " . $this->table . " (fk_id_cultivo, fk_id_produccion) 
@@ -42,6 +49,34 @@ class Genera {
         $stmt->bindParam(":fk_id_cultivo", $this->fk_id_cultivo, PDO::PARAM_INT);
         $stmt->bindParam(":fk_id_produccion", $this->fk_id_produccion, PDO::PARAM_INT);
 
+        return $stmt->execute();
+    }
+    public function patch($id, $data) {
+        $query = "UPDATE " . $this->table . " SET ";
+        $fields = [];
+    
+        if (isset($data['fk_id_cultivo'])) {
+            $fields[] = "fk_id_cultivo = :fk_id_cultivo";
+        }
+        if (isset($data['fk_id_produccion'])) {
+            $fields[] = "fk_id_produccion = :fk_id_produccion";
+        }
+    
+        if (empty($fields)) {
+            return false;
+        }
+    
+        $query .= implode(", ", $fields) . " WHERE id_genera = :id";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+    
+        if (isset($data['fk_id_cultivo'])) {
+            $stmt->bindParam(":fk_id_cultivo", $data['fk_id_cultivo'], PDO::PARAM_INT);
+        }
+        if (isset($data['fk_id_produccion'])) {
+            $stmt->bindParam(":fk_id_produccion", $data['fk_id_produccion'], PDO::PARAM_INT);
+        }
+    
         return $stmt->execute();
     }
 

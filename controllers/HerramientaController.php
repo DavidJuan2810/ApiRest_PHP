@@ -36,6 +36,16 @@ class HerramientaController {
             echo json_encode(["status" => "Error", "message" => "Error al crear"]);
         }
     }
+    public function getById($id) {
+        $stmt = $this->herramienta->getById($id);
+        $herramienta = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($herramienta) {
+            echo json_encode(["status" => "200", "data" => $herramienta]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "No se encontró la herramienta"]);
+        }
+    }
 
     public function update($id) {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -54,6 +64,16 @@ class HerramientaController {
             echo json_encode(["status" => "200", "message" => "Herramienta actualizada"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
+        }
+    
+    }
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+    
+        if ($this->herramienta->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Herramienta actualizada parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar parcialmente"]);
         }
     }
 

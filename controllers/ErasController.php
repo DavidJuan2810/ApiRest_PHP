@@ -65,6 +65,15 @@ class ErasController {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
         }
     }
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->eras->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Era actualizada parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar parcialmente"]);
+        }
+    }
 
     public function delete($id) {
         if ($this->eras->delete($id)) {

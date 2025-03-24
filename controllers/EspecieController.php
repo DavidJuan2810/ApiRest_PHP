@@ -65,6 +65,15 @@ class EspecieController {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
         }
     }
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+    
+        if ($this->especie->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Especie actualizada parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar parcialmente"]);
+        }
+    }
 
     public function delete($id) {
         if ($this->especie->delete($id)) {
