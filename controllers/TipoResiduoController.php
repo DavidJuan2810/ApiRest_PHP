@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/TipoResiduo.php';
+require_once 'config/database.php';
+require_once 'models/TipoResiduo.php';
 
 class TipoResiduoController {
     private $db;
@@ -32,6 +32,20 @@ class TipoResiduoController {
             echo json_encode(["status" => "201", "message" => "Tipo de residuo creado"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al crear"]);
+        }
+    }
+    public function getById($id) {
+        $result = $this->tipoResiduo->getById($id);
+        echo json_encode($result);
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->tipoResiduo->patch($id, $data)) {
+            echo json_encode(["message" => "Tipo de residuo actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el tipo de residuo"]);
         }
     }
 

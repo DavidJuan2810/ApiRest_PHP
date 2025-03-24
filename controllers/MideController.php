@@ -18,6 +18,16 @@ class MideController {
         echo json_encode(["status" => "200", "data" => $mideData]);
     }
 
+    public function getById($id) {
+        $mide = $this->mide->getById($id);
+        if ($mide) {
+            echo json_encode(["status" => "200", "data" => $mide]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Registro en mide no encontrado"]);
+            http_response_code(404);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
         if (!isset($data['fk_id_sensor'], $data['fk_id_era'])) {
@@ -50,6 +60,30 @@ class MideController {
             echo json_encode(["status" => "200", "message" => "Registro en mide actualizado"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar"]);
+        }
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            http_response_code(400);
+            return;
+        }
+
+        $mideExistente = $this->mide->getById($id);
+        if (!$mideExistente) {
+            echo json_encode(["status" => "Error", "message" => "Registro en mide no encontrado"]);
+            http_response_code(404);
+            return;
+        }
+
+        if ($this->mide->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Registro en mide actualizado parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar el registro"]);
+            http_response_code(500);
         }
     }
 

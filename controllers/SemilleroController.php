@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/Semillero.php';
+require_once 'config/database.php';
+require_once 'models/Semillero.php';
 
 class SemilleroController {
     private $db;
@@ -34,6 +34,20 @@ class SemilleroController {
             echo json_encode(["status" => "201", "message" => "Semillero creado"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al crear"]);
+        }
+    }
+    public function getById($id) {
+        $result = $this->semillero->getById($id);
+        echo json_encode($result);
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->semillero->patch($id, $data)) {
+            echo json_encode(["message" => "Semillero actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el semillero"]);
         }
     }
 

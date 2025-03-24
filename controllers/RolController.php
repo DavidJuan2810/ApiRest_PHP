@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/Rol.php';
+require_once 'config/database.php';
+require_once 'models/Rol.php';
 
 class RolController {
     private $db;
@@ -31,6 +31,20 @@ class RolController {
             echo json_encode(["status" => "201", "message" => "Rol creado"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al crear"]);
+        }
+    }
+    public function getById($id) {
+        $result = $this->rol->getById($id);
+        echo json_encode($result);
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->rol->patch($id, $data)) {
+            echo json_encode(["message" => "Rol actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el rol"]);
         }
     }
 

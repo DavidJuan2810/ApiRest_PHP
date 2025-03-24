@@ -25,19 +25,6 @@ class Programacion {
         return $stmt;
     }
 
-    public function getById($id) {
-        $query = "SELECT programacion.*, asignacion_actividad.fk_id_actividad, calendario_lunar.evento 
-                  FROM " . $this->table . " 
-                  INNER JOIN asignacion_actividad ON programacion.fk_id_asignacion_actividad = asignacion_actividad.id_asignacion_actividad 
-                  INNER JOIN calendario_lunar ON programacion.fk_id_calendario_lunar = calendario_lunar.id_calendario_lunar 
-                  WHERE programacion.id_programacion = :id";
-
-        $stmt = $this->connect->prepare($query);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-        return $stmt;
-    }
-
     public function create() {
         $query = "INSERT INTO " . $this->table . " (duracion, estado, fecha_programada, fk_id_asignacion_actividad, fk_id_calendario_lunar) 
                   VALUES (:duracion, :estado, :fecha_programada, :fk_id_asignacion_actividad, :fk_id_calendario_lunar)";
@@ -49,6 +36,35 @@ class Programacion {
         $stmt->bindParam(":fk_id_asignacion_actividad", $this->fk_id_asignacion_actividad);
         $stmt->bindParam(":fk_id_calendario_lunar", $this->fk_id_calendario_lunar);
         
+        return $stmt->execute();
+    }
+    public function getById($id) {
+        $query = "SELECT programacion.*, asignacion_actividad.fk_id_actividad, calendario_lunar.evento 
+                  FROM " . $this->table . " 
+                  INNER JOIN asignacion_actividad ON programacion.fk_id_asignacion_actividad = asignacion_actividad.id_asignacion_actividad 
+                  INNER JOIN calendario_lunar ON programacion.fk_id_calendario_lunar = calendario_lunar.id_calendario_lunar 
+                  WHERE id_programacion = :id_programacion";
+
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id_programacion", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function patch($id, $data) {
+        $fields = [];
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+
+        $query = "UPDATE " . $this->table . " SET " . implode(", ", $fields) . " WHERE id_programacion = :id_programacion";
+        $stmt = $this->connect->prepare($query);
+        
+        foreach ($data as $key => &$value) {
+            $stmt->bindParam(":$key", $value);
+        }
+
+        $stmt->bindParam(":id_programacion", $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 

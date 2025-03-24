@@ -18,6 +18,16 @@ class PeaController {
         echo json_encode(["status" => "200", "data" => $peas]);
     }
 
+    public function getById($id) {
+        $pea = $this->pea->getById($id);
+        if ($pea) {
+            echo json_encode(["status" => "200", "data" => $pea]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "PEA no encontrado"]);
+            http_response_code(404);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -55,6 +65,30 @@ class PeaController {
         }
     }
 
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            http_response_code(400);
+            return;
+        }
+
+        $peaExistente = $this->pea->getById($id);
+        if (!$peaExistente) {
+            echo json_encode(["status" => "Error", "message" => "PEA no encontrado"]);
+            http_response_code(404);
+            return;
+        }
+
+        if ($this->pea->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "PEA actualizado parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar el PEA"]);
+            http_response_code(500);
+        }
+    }
+
     public function delete($id) {
         $query = "DELETE FROM PEA WHERE id_pea = :id";
         $stmt = $this->db->prepare($query);
@@ -68,4 +102,3 @@ class PeaController {
     }
 }
 ?>
-

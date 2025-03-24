@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/Residuo.php';
+require_once 'config/database.php';
+require_once 'models/Residuo.php';
 
 class ResiduoController {
     private $db;
@@ -35,6 +35,20 @@ class ResiduoController {
             echo json_encode(["status" => "201", "message" => "Residuo creado"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al crear"]);
+        }
+    }
+    public function getById($id) {
+        $result = $this->residuo->getById($id);
+        echo json_encode($result);
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->residuo->patch($id, $data)) {
+            echo json_encode(["message" => "Registro actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el registro"]);
         }
     }
 

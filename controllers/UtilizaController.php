@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/Utiliza.php';
+require_once 'config/database.php';
+require_once 'models/Utiliza.php';
 
 class UtilizaController {
     private $db;
@@ -33,6 +33,20 @@ class UtilizaController {
             echo json_encode(["message" => "Registro creado exitosamente"]);
         } else {
             echo json_encode(["message" => "Error al crear el registro"]);
+        }
+    }
+    public function getById($id_utiliza) {
+        $result = $this->utiliza->getById($id_utiliza);
+        echo json_encode($result);
+    }
+
+    public function patch($id_utiliza) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->utiliza->patch($id_utiliza, $data)) {
+            echo json_encode(["message" => "Registro actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el registro"]);
         }
     }
 

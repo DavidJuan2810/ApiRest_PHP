@@ -19,6 +19,14 @@ class Notificacion {
         return $stmt;
     }
 
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id_notificacion = :id_notificacion";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id_notificacion", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function create() {
         $query = "INSERT INTO " . $this->table . " (fk_id_programacion, mensaje, titulo) VALUES (:fk_id_programacion, :mensaje, :titulo)";
         $stmt = $this->connect->prepare($query);
@@ -37,6 +45,27 @@ class Notificacion {
         $stmt->bindParam(":mensaje", $this->mensaje);
         $stmt->bindParam(":titulo", $this->titulo);
         
+        return $stmt->execute();
+    }
+
+    public function patch($id, $data) {
+        $fields = [];
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $query = "UPDATE " . $this->table . " SET " . implode(", ", $fields) . " WHERE id_notificacion = :id_notificacion";
+        $stmt = $this->connect->prepare($query);
+        
+        foreach ($data as $key => &$value) {
+            $stmt->bindParam(":$key", $value);
+        }
+        $stmt->bindParam(":id_notificacion", $id, PDO::PARAM_INT);
+
         return $stmt->execute();
     }
 

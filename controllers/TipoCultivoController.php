@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/TipoCultivo.php';
+require_once 'config/database.php';
+require_once 'models/TipoCultivo.php';
 
 class TipoCultivoController {
     private $db;
@@ -33,6 +33,20 @@ class TipoCultivoController {
             echo json_encode(["status" => "201", "message" => "Tipo de cultivo creado"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al crear el tipo de cultivo"]);
+        }
+    }
+    public function getById($id) {
+        $result = $this->tipoCultivo->getById($id);
+        echo json_encode($result);
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->tipoCultivo->patch($id, $data)) {
+            echo json_encode(["message" => "Tipo de cultivo actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el tipo de cultivo"]);
         }
     }
 

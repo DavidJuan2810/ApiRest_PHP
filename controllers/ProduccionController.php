@@ -18,6 +18,16 @@ class ProduccionController {
         echo json_encode(["status" => "200", "data" => $data]);
     }
 
+    public function getById($id) {
+        $produccion = $this->produccion->getById($id);
+        if ($produccion) {
+            echo json_encode(["status" => "200", "data" => $produccion]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Producción no encontrada"]);
+            http_response_code(404);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
         
@@ -62,6 +72,45 @@ class ProduccionController {
             echo json_encode(["status" => "200", "message" => "Producción actualizada"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar producción"]);
+        }
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            http_response_code(400);
+            return;
+        }
+
+        $produccionExistente = $this->produccion->getById($id);
+        if (!$produccionExistente) {
+            echo json_encode(["status" => "Error", "message" => "Producción no encontrada"]);
+            http_response_code(404);
+            return;
+        }
+
+        if ($this->produccion->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Producción actualizada parcialmente"]);
+        } else {
+            // Verificar si no se proporcionaron campos válidos
+            $validFields = ['fk_id_cultivo', 'cantidad_producida', 'fecha_produccion', 'fk_id_lote', 'descripcion_produccion', 'estado', 'fecha_cosecha'];
+            $hasValidFields = false;
+            foreach ($data as $key => $value) {
+                if (in_array($key, $validFields)) {
+                    $hasValidFields = true;
+                    break;
+                }
+            }
+
+            if (!$hasValidFields) {
+                echo json_encode(["status" => "Error", "message" => "No se proporcionaron campos válidos para actualizar"]);
+                http_response_code(400);
+            } else {
+                echo json_encode(["status" => "Error", "message" => "Error al actualizar la producción"]);
+                http_response_code(500);
+            }
         }
     }
 

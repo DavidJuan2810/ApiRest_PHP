@@ -23,7 +23,7 @@ class AuthController {
                 $secret_key = "your_secret_key_123";
                 $issuer = "localhost";
                 $issued_at = time();
-                $expiration_time = $issued_at + (60 * 60);
+                $expiration_time = $issued_at + (60 * 60 * 24);
 
                 $payload = [
                     'iat' => $issued_at,

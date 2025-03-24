@@ -18,6 +18,16 @@ class PlantacionController {
         echo json_encode(["status" => "200", "data" => $plantaciones]);
     }
 
+    public function getById($id) {
+        $plantacion = $this->plantacion->getById($id);
+        if ($plantacion) {
+            echo json_encode(["status" => "200", "data" => $plantacion]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Plantación no encontrada"]);
+            http_response_code(404);
+        }
+    }
+
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
         
@@ -52,6 +62,46 @@ class PlantacionController {
             echo json_encode(["status" => "200", "message" => "Plantación actualizada"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al actualizar la plantación"]);
+        }
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($data)) {
+            echo json_encode(["status" => "Error", "message" => "No hay datos para actualizar"]);
+            http_response_code(400);
+            return;
+        }
+
+        $plantacionExistente = $this->plantacion->getById($id);
+        if (!$plantacionExistente) {
+            echo json_encode(["status" => "Error", "message" => "Plantación no encontrada"]);
+            http_response_code(404);
+            return;
+        }
+
+        // Verificar si hay campos válidos antes de intentar la actualización
+        $validFields = ['fk_id_cultivo', 'fk_id_era'];
+        $hasValidFields = false;
+        foreach ($data as $key => $value) {
+            if (in_array($key, $validFields)) {
+                $hasValidFields = true;
+                break;
+            }
+        }
+
+        if (!$hasValidFields) {
+            echo json_encode(["status" => "Error", "message" => "No se proporcionaron campos válidos para actualizar (solo fk_id_cultivo y fk_id_era son permitidos)"]);
+            http_response_code(400);
+            return;
+        }
+
+        if ($this->plantacion->patch($id, $data)) {
+            echo json_encode(["status" => "200", "message" => "Plantación actualizada parcialmente"]);
+        } else {
+            echo json_encode(["status" => "Error", "message" => "Error al actualizar la plantación"]);
+            http_response_code(500);
         }
     }
 

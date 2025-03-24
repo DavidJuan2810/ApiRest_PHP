@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/Venta.php';
+require_once 'config/database.php';
+require_once 'models/Venta.php';
 
 class VentaController {
     private $db;
@@ -35,6 +35,20 @@ class VentaController {
             echo json_encode(["status" => "201", "message" => "Venta registrada"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al registrar venta"]);
+        }
+    }
+    public function getById($id_venta) {
+        $result = $this->venta->getById($id_venta);
+        echo json_encode($result);
+    }
+
+    public function patch($id_venta) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->venta->patch($id_venta, $data)) {
+            echo json_encode(["message" => "Registro actualizado correctamente"]);
+        } else {
+            echo json_encode(["error" => "Error al actualizar el registro"]);
         }
     }
 

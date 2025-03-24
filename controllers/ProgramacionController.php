@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/Programacion.php';
+require_once 'config/database.php';
+require_once 'models/Programacion.php';
 
 class ProgramacionController {
     private $db;
@@ -16,16 +16,6 @@ class ProgramacionController {
         $stmt = $this->programacion->getAll();
         $programaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(["status" => "200", "data" => $programaciones]);
-    }
-
-    public function getById($id) {
-        $stmt = $this->programacion->getById($id);
-        $programacion = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($programacion) {
-            echo json_encode(["status" => "200", "data" => $programacion]);
-        } else {
-            echo json_encode(["status" => "Error", "message" => "Programación no encontrada"]);
-        }
     }
 
     public function create() {
@@ -46,6 +36,24 @@ class ProgramacionController {
             echo json_encode(["status" => "201", "message" => "Programación creada correctamente"]);
         } else {
             echo json_encode(["status" => "Error", "message" => "Error al crear la programación"]);
+        }
+    }
+    public function getById($id) {
+        $result = $this->programacion->getById($id);
+        if ($result) {
+            echo json_encode(["success" => true, "data" => $result]);
+        } else {
+            echo json_encode(["success" => false, "message" => "Programación no encontrada"]);
+        }
+    }
+
+    public function patch($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if ($this->programacion->patch($id, $data)) {
+            echo json_encode(["success" => true, "message" => "Programación actualizada correctamente"]);
+        } else {
+            echo json_encode(["success" => false, "message" => "Error al actualizar programación"]);
         }
     }
 

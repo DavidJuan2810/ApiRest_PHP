@@ -18,6 +18,14 @@ class Pea {
         return $stmt;
     }
 
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id_pea = :id_pea";
+        $stmt = $this->connect->prepare($query);
+        $stmt->bindParam(":id_pea", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function create() {
         $query = "INSERT INTO " . $this->table . " (nombre, descripcion) VALUES (:nombre, :descripcion)";
         $stmt = $this->connect->prepare($query);
@@ -39,6 +47,27 @@ class Pea {
         return $stmt->execute();
     }
 
+    public function patch($id, $data) {
+        $fields = [];
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $query = "UPDATE " . $this->table . " SET " . implode(", ", $fields) . " WHERE id_pea = :id_pea";
+        $stmt = $this->connect->prepare($query);
+
+        foreach ($data as $key => &$value) {
+            $stmt->bindParam(":$key", $value);
+        }
+        $stmt->bindParam(":id_pea", $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
     public function delete($id) {
         $query = "DELETE FROM " . $this->table . " WHERE id_pea = :id";
         $stmt = $this->connect->prepare($query);
@@ -48,4 +77,3 @@ class Pea {
     }
 }
 ?>
-
